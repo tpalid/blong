@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<!-- HTML5 Hello world by kirupa - http://www.kirupa.com/html5/getting_your_feet_wet_html5_pg1.htm -->
+<html lang="en-us">
+
+<head>
+<meta charset="utf-8">
+<title>Blong!</title>
+<style type="text/css">
+#board {
+	background-color: black;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="board" width="1000" height="700"></a>></canvas>
+
+<script> 
+
+function draw_box() {
+	var table_canvas = document.getElementById("board");
+	var table_context = table_canvas.getContext("2d");
+	return table_context;
+};
+
+var table_context = draw_box();
+
+function Paddle(x, y, width, height) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.render = function() {
+    	table_context.rect(this.x, this.y, this.width, this.height);
+		table_context.fillStyle = "red";
+		table_context.fill();
+    }
+}
+
+function Ball(x, y, radius){
+	this.x = x;
+    this.y = y;
+    this.radius = radius;
+    this.render = function() {
+    	table_context.arc(this.x, this.y, this.radius, 0, 2*Math.PI);
+		table_context.fillStyle = "red";
+		table_context.fill();
+    };
+}
+
+var player = new Paddle(980, 250, 20, 100);
+var computer = new Paddle(0, 250, 20, 100);
+var ball = new Ball(500, 340, 20);
+
+function render() {
+player.render();
+computer.render();
+ball.render();
+}
+
+window.onload = function(){
+      render();
+};
+
+</script>
+
+</body>
+</html>
