@@ -38,9 +38,8 @@ function Paddle(x, y, width, height, speed) {
 		table_context.fillStyle = "red";
 		table_context.fill();
 		table_context.closePath();
-		console.log("in this.render");
     };
-     this.move = function(speed) {
+    this.move = function(speed) {
         if ((this.y += speed) < 0) {
             this.y = 0;
         }
@@ -48,24 +47,59 @@ function Paddle(x, y, width, height, speed) {
             this.y = 600;
         }
         else this.y = this.y + speed;
-        };
+    };
 }
 
-function Ball(x, y, radius){
+function Ball(x, y, radius, speedx, speedy){
 	this.x = x;
     this.y = y;
     this.radius = radius;
-    this.render = function() {
+    this.speedx = speedx;
+    this.speedy = speedy;
+    this.render = function(rect) {
+        table_context.beginPath();
     	table_context.arc(this.x, this.y, this.radius, 0, 2*Math.PI);
 		table_context.fillStyle = "red";
 		table_context.fill();
+		table_context.closePath();
+		this.move(rect);
+    };
+    this.move = function() {
+        if ((this.y - this.radius) == 0 || (this.y + this.radius) == 700) {
+            console.log("bounce");
+            this.speedy = - this.speedy;
+            }
+        else if ((hit(player) == true) || (hit(computer) == true)) {
+            console.log("bounce");
+            this.speedx = - this.speedx;
+            }
+        this.y = this.y + this.speedy;
+        this.x = this.x + this.speedx;
     };
  }
+ 
+function hit(paddle) {
+    var distX = Math.abs(ball.x - paddle.x - paddle.width/2);
+    var distY = Math.abs(ball.y - paddle.y - paddle.height/2);
+    if (distX > (paddle.width / 2 + ball.radius)) {
+    return false;
+    }
+    if (distY > (paddle.height / 2 + ball.radius)) {
+    return false;
+    }
+    if (distX <= (paddle.width / 2)) {
+        return true;
+    }
+    if (distY <= (paddle.height / 2)) {
+        return true;
+    }
+
+}
 
 
 var player = new Paddle(980, 250, 20, 100, 10); //10 pixels per key press
-var computer = new Paddle(0, 250, 20, 100);
-var ball = new Ball(500, 340, 20); 
+var computer = new Paddle(0, 300, 20, 100);
+var ball = new Ball(500, 340, 20, -2, -2); //initial speed 5 pixels per second
 
 function render() {
 table_context.clearRect(0, 0, 1000, 700);
