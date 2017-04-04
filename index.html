@@ -1,19 +1,34 @@
 <!DOCTYPE html>
-<!-- HTML5 Hello world by kirupa - http://www.kirupa.com/html5/getting_your_feet_wet_html5_pg1.htm -->
+
 <html lang="en-us">
 
 <head>
 <meta charset="utf-8">
 <title>Blong!</title>
 <style type="text/css">
+
+h1 {
+    font-family: verdana;
+}
 #board {
 	background-color: black;
+}
+
+#scoreboard {
+    font-family: verdana;
 }
 </style>
 </head>
 
 <body>
-
+<h1> BLONG! </h1>
+<div id="scoreboard">
+    <h3>Player Score: 
+    <text id="playerscore" >0</text> </h3>
+    <h3>Computer Score:
+    <text id= "computerscore">0</text>
+    </h3>
+</div>
 <canvas id="board" width="1000" height="700"></a>></canvas>
 
 <script> 
@@ -96,7 +111,9 @@ function Ball(x, y, radius, speedx, speedy){
                 this.speedx = -this.speedx;
             }
             this.speedy = 5*(Math.random() < 0.5 ? -1 : 1);
-            console.log("player scores");
+            playerscore += 1;
+            playerscorediv.innerHTML = playerscore;
+            console.log("player score: " + playerscore);
             }
         else if (this.x >=  1000) {
             this.x = 500;
@@ -105,7 +122,9 @@ function Ball(x, y, radius, speedx, speedy){
                 this.speedx = - this.speedx;
             }
             this.speedy = 5*(Math.random() < 0.5 ? -1 : 1);
-            console.log("computer scores");
+            console.log("computer score: " + computerscore);
+            computerscore += 1;
+            computerscorediv.innerHTML = computerscore;
         }
         this.y = this.y + this.speedy;
         this.x = this.x + this.speedx;
@@ -156,6 +175,10 @@ var animate = window.requestAnimationFrame ||
 var player = new Paddle(980, 250, 20, 100, 7); //10 pixels per key press
 var computer = new Paddle(0, 300, 20, 100, .75);
 var ball = new Ball(500, 340, 20, 5, -5); //initial speed 5 pixels per second
+var playerscore = 0;
+var computerscore = 0;
+var playerscorediv = document.getElementById("playerscore");
+var computerscorediv = document.getElementById("computerscore");
 
 window.addEventListener('keydown', function(event) {
     if (event.keyCode == 38) {
