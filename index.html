@@ -22,7 +22,7 @@ function draw_box() {
 	var table_canvas = document.getElementById("board");
 	var table_context = table_canvas.getContext("2d");
 	return table_context;
-}; 
+}
 
 var table_context = draw_box();
 
@@ -48,6 +48,15 @@ function Paddle(x, y, width, height, speed) {
         }
         else this.y = this.y + speed;
     };
+    
+    this.update = function(ball) {
+        if (ball.speedy > 0) {
+            this.move(this.speed); 
+            }
+        else if (ball.speedy < 0) {
+            this.move(-this.speed);
+        }
+    };
 }
 
 function Ball(x, y, radius, speedx, speedy){
@@ -56,6 +65,12 @@ function Ball(x, y, radius, speedx, speedy){
     this.radius = radius;
     this.speedx = speedx;
     this.speedy = speedy;
+    var ytopupper = 0 - (this.speedy/2);
+    var ybottomupper = 0 + (this.speedy/2);
+    var ybottomlower = 700 - (this.speedy/2);
+    var ytoplower= 700 + (this.speedy/2);
+    console.log(ytoplower, ybottomlower);
+   
     this.render = function(rect) {
         table_context.beginPath();
     	table_context.arc(this.x, this.y, this.radius, 0, 2*Math.PI);
@@ -65,18 +80,44 @@ function Ball(x, y, radius, speedx, speedy){
 		this.move(rect);
     };
     this.move = function() {
-        if ((this.y - this.radius) == 0 || (this.y + this.radius) == 700) {
-            console.log("bounce");
-            this.speedy = - this.speedy;
+        var balltop = this.y - this.radius;
+        var ballbottom = this.y + this.radius;
+        if ((inrange(ybottomupper, ytopupper, balltop)) || (inrange(ytoplower, ybottomlower, ballbottom))) {
+             this.speedy = -this.speedy;
             }
         else if ((hit(player) == true) || (hit(computer) == true)) {
-            console.log("bounce");
+            console.log("bounce2");
             this.speedx = - this.speedx;
             }
+        else if (this.x <= 0) {
+            this.x = 500;
+            this.y = 340;
+            if (this.speedx < 1) {
+                this.speedx = -this.speedx;
+            }
+            this.speedy = 5*(Math.random() < 0.5 ? -1 : 1);
+            console.log("player scores");
+            }
+        else if (this.x >=  1000) {
+            this.x = 500;
+            this.y = 340;
+            if (this.speedx > 1) {
+                this.speedx = - this.speedx;
+            }
+            this.speedy = 5*(Math.random() < 0.5 ? -1 : 1);
+            console.log("computer scores");
+        }
         this.y = this.y + this.speedy;
         this.x = this.x + this.speedx;
     };
  }
+ 
+function inrange(x, y, z) {
+    if (x <= z && y >= z) {
+        return true;
+    }
+    else return false;
+}
  
 function hit(paddle) {
     var distX = Math.abs(ball.x - paddle.x - paddle.width/2);
@@ -96,25 +137,25 @@ function hit(paddle) {
 
 }
 
-
-var player = new Paddle(980, 250, 20, 100, 10); //10 pixels per key press
-var computer = new Paddle(0, 300, 20, 100);
-var ball = new Ball(500, 340, 20, -2, -2); //initial speed 5 pixels per second
-
 function render() {
 table_context.clearRect(0, 0, 1000, 700);
 player.render();
 computer.render();
+computer.update(ball);
 ball.render();
 }
 
-var animate = window.requestAnimationFrame ||
-    function(callback) { window.setTimeout(callback, 100/60) };
-    
 function step() {   
     render();
     animate(step);
 }
+
+var animate = window.requestAnimationFrame ||
+    function(callback) { window.setTimeout(callback, 100/60) };
+
+var player = new Paddle(980, 250, 20, 100, 7); //10 pixels per key press
+var computer = new Paddle(0, 300, 20, 100, .75);
+var ball = new Ball(500, 340, 20, 5, -5); //initial speed 5 pixels per second
 
 window.addEventListener('keydown', function(event) {
     if (event.keyCode == 38) {
