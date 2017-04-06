@@ -14,21 +14,20 @@ h1 {
 	background-color: black;
 }
 
-#scoreboard {
-    font-family: verdana;
+
+canvas {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 800px;
 }
 </style>
 </head>
 
 <body>
-<h1> BLONG! </h1>
-<div id="scoreboard">
-    <h3>Player Score: 
-    <text id="playerscore" >0</text> </h3>
-    <h3>Computer Score:
-    <text id= "computerscore">0</text>
-    </h3>
-</div>
+<!--<h1> BLONG! </h1>-->
 <canvas id="board" width="1000" height="700"></a>></canvas>
 
 <script> 
@@ -50,7 +49,7 @@ function Paddle(x, y, width, height, speed) {
     this.render = function() {
         table_context.beginPath();
     	table_context.rect(this.x, this.y, this.width, this.height);
-		table_context.fillStyle = "red";
+		table_context.fillStyle = "white";
 		table_context.fill();
 		table_context.closePath();
     };
@@ -89,7 +88,7 @@ function Ball(x, y, radius, speedx, speedy){
     this.render = function(rect) {
         table_context.beginPath();
     	table_context.arc(this.x, this.y, this.radius, 0, 2*Math.PI);
-		table_context.fillStyle = "red";
+		table_context.fillStyle = "white";
 		table_context.fill();
 		table_context.closePath();
 		this.move(rect);
@@ -112,8 +111,6 @@ function Ball(x, y, radius, speedx, speedy){
             }
             this.speedy = 5*(Math.random() < 0.5 ? -1 : 1);
             playerscore += 1;
-            playerscorediv.innerHTML = playerscore;
-            console.log("player score: " + playerscore);
             }
         else if (this.x >=  1000) {
             this.x = 500;
@@ -122,12 +119,11 @@ function Ball(x, y, radius, speedx, speedy){
                 this.speedx = - this.speedx;
             }
             this.speedy = 5*(Math.random() < 0.5 ? -1 : 1);
-            console.log("computer score: " + computerscore);
             computerscore += 1;
-            computerscorediv.innerHTML = computerscore;
         }
         this.y = this.y + this.speedy;
         this.x = this.x + this.speedx;
+        gameover();
     };
  }
  
@@ -162,18 +158,50 @@ player.render();
 computer.render();
 computer.update(ball);
 ball.render();
+renderScore();
+renderCenterLine();
 }
 
 function step() {   
+    if (gameover() == true) {
+        return;
+    }
+    else 
     render();
     animate(step);
+   
+}
+
+function gameover() {
+    if ((playerscore == 11) || (computerscore == 11)) {
+        playerscore = 0;
+        computerscore = 0;
+        table_context.fillText("GAME OVER", 500, 350);
+        return true;
+    }
+}
+
+function renderScore() {
+    table_context.font = "bold 40px sans-serif";
+    table_context.fillText(playerscore, 400, 50);
+    table_context.fillText(computerscore, 550, 50);
+}
+
+function renderCenterLine() {
+    table_context.setLineDash ([5, 15]);
+    table_context.beginPath();
+    table_context.moveTo(500, 0);
+    table_context.lineTo(500, 700);
+    table_context.strokeStyle = "white";
+     table_context.lineWidth= 5;
+    table_context.stroke();
 }
 
 var animate = window.requestAnimationFrame ||
     function(callback) { window.setTimeout(callback, 100/60) };
 
-var player = new Paddle(980, 250, 20, 100, 7); //10 pixels per key press
-var computer = new Paddle(0, 300, 20, 100, .75);
+var player = new Paddle(960, 250, 20, 100, 7); //10 pixels per key press
+var computer = new Paddle(20, 300, 20, 100, .75);
 var ball = new Ball(500, 340, 20, 5, -5); //initial speed 5 pixels per second
 var playerscore = 0;
 var computerscore = 0;
