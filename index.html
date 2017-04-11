@@ -3,6 +3,7 @@
 <html lang="en-us">
 
 <head>
+<link href="https://fonts.googleapis.com/css?family=Raleway+Dots" rel="stylesheet">
 <meta charset="utf-8">
 <title>Blong!</title>
 <style type="text/css">
@@ -163,7 +164,7 @@ renderCenterLine();
 }
 
 function step() {   
-    if (gameover() == true) {
+    if (runAnimation == false) {
         return;
     }
     else 
@@ -173,16 +174,24 @@ function step() {
 }
 
 function gameover() {
-    if ((playerscore == 11) || (computerscore == 11)) {
-        playerscore = 0;
-        computerscore = 0;
-        table_context.fillText("GAME OVER", 500, 350);
-        return true;
+    if (playerscore == 11) {
+        table_context.font = "bold 40px arial";
+        table_context.fillStyle = 'red';
+        table_context.fillText("YOU WIN!", 380, 350);
+        table_context.fillText("(refresh to restart)", 330, 450);
+        runAnimation = false; 
+    }
+    else if (computerscore == 11) {
+        table_context.font = "bold 40px arial";
+        table_context.fillStyle = 'red';
+        table_context.fillText("YOU LOSE!", 380, 350);
+        table_context.fillText("(refresh to restart)", 330, 450);
+        runAnimation = false;
     }
 }
 
 function renderScore() {
-    table_context.font = "bold 40px sans-serif";
+    table_context.font = "bold 40px arial";
     table_context.fillText(playerscore, 400, 50);
     table_context.fillText(computerscore, 550, 50);
 }
@@ -205,8 +214,7 @@ var computer = new Paddle(20, 300, 20, 100, .75);
 var ball = new Ball(500, 340, 20, 5, -5); //initial speed 5 pixels per second
 var playerscore = 0;
 var computerscore = 0;
-var playerscorediv = document.getElementById("playerscore");
-var computerscorediv = document.getElementById("computerscore");
+var runAnimation = true;
 
 window.addEventListener('keydown', function(event) {
     if (event.keyCode == 38) {
